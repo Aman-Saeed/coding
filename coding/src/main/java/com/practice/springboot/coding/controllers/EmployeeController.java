@@ -1,15 +1,13 @@
 package com.practice.springboot.coding.controllers;
 
-import com.practice.springboot.coding.dto.EmployeeDTO;
-import jakarta.websocket.server.PathParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.practice.springboot.coding.entities.EmployeeEntity;
+import com.practice.springboot.coding.repositories.EmployeeRepository;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @RestController
+@RequestMapping("/employees")
 public class EmployeeController {
 
 //    @GetMapping("/employeesSecretMessage")
@@ -17,16 +15,25 @@ public class EmployeeController {
 //        return "This is a secret message for employees only!";
 //    }
 
+    private final EmployeeRepository employeeRepository;
 
-    @GetMapping("/employees/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long employeeId) {
-        return new EmployeeDTO(employeeId, "Aman Saeed", "amansaeed899@gmail.com", 25, LocalDate.of(2024,1,1), true);
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
-    @GetMapping("/employees")
-    public String getAllEmployees(@RequestParam(required = false) Integer age, @RequestParam(required = false) String sortBy) {
-        return "age is  = " + age + " and sortBy is = " + sortBy;
+    @GetMapping("/{employeeId}")
+    public EmployeeEntity getEmployeeById(@PathVariable("employeeId") Long employeeId) {
+       return employeeRepository.getReferenceById(employeeId);
     }
 
+    @GetMapping
+    public List<EmployeeEntity> getAllEmployees(@RequestParam(required = false) Integer age,
+                                                @RequestParam(required = false) String sortBy) {
+        return employeeRepository.findAll();
+    }
+    @PostMapping
+    public EmployeeEntity createEmployee(@RequestBody EmployeeEntity employeeEntity) {
+       return employeeRepository.save(employeeEntity);
+    }
 
 }
