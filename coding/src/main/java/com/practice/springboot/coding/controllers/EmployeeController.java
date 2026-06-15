@@ -1,7 +1,9 @@
 package com.practice.springboot.coding.controllers;
 
+import com.practice.springboot.coding.dto.EmployeeDTO;
 import com.practice.springboot.coding.entities.EmployeeEntity;
 import com.practice.springboot.coding.repositories.EmployeeRepository;
+import com.practice.springboot.coding.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,25 +17,26 @@ public class EmployeeController {
 //        return "This is a secret message for employees only!";
 //    }
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
+
     @GetMapping("/{employeeId}")
-    public EmployeeEntity getEmployeeById(@PathVariable("employeeId") Long employeeId) {
-       return employeeRepository.getReferenceById(employeeId);
+    public EmployeeDTO getEmployeeById(@PathVariable("employeeId") Long Id) {
+       return employeeService.getEmployeeById(Id);
     }
 
     @GetMapping
-    public List<EmployeeEntity> getAllEmployees(@RequestParam(required = false) Integer age,
+    public List<EmployeeDTO> getAllEmployees(@RequestParam(required = false) Integer age,
                                                 @RequestParam(required = false) String sortBy) {
-        return employeeRepository.findAll();
+        return employeeService.getAllEmployees();
     }
     @PostMapping
-    public EmployeeEntity createEmployee(@RequestBody EmployeeEntity employeeEntity) {
-       return employeeRepository.save(employeeEntity);
+    public EmployeeDTO createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+       return employeeService.createEmployee(employeeDTO);
     }
 
 }
