@@ -40,4 +40,20 @@ public class EmployeeService {
         return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
 
     }
+
+    public EmployeeDTO updateEmployeeById(Long id, EmployeeDTO employeeDTO) {
+        EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
+        employeeEntity.setId(id);
+        EmployeeEntity updatedEmployeeEntity = employeeRepository.save(employeeEntity);
+        return modelMapper.map(updatedEmployeeEntity, EmployeeDTO.class);
+    }
+
+    public boolean deleteEmployeeById(Long employeeId) {
+        boolean exists = employeeRepository.existsById(employeeId);
+        if (!exists) {
+            return false;
+        }
+        employeeRepository.deleteById(employeeId);
+        return true;
+    }
 }
