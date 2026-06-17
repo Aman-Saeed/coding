@@ -1,5 +1,6 @@
 package com.practice.springboot.coding.controllers;
 import com.practice.springboot.coding.dto.EmployeeDTO;
+import com.practice.springboot.coding.exceptions.ResourceNotFoundException;
 import com.practice.springboot.coding.services.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -26,7 +28,7 @@ public class EmployeeController {
         Optional<EmployeeDTO> employeeDTO = employeeService.getEmployeeById(Id);
 
        return employeeDTO.map(EmployeeDTO1 -> ResponseEntity.ok(EmployeeDTO1))
-               .orElse(ResponseEntity.notFound().build());
+               .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + Id));
     }
 
     @GetMapping

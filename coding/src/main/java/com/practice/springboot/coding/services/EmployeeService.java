@@ -2,6 +2,7 @@ package com.practice.springboot.coding.services;
 
 import com.practice.springboot.coding.dto.EmployeeDTO;
 import com.practice.springboot.coding.entities.EmployeeEntity;
+import com.practice.springboot.coding.exceptions.ResourceNotFoundException;
 import com.practice.springboot.coding.repositories.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -47,6 +48,9 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updateEmployeeById(Long id, EmployeeDTO employeeDTO) {
+
+        isExistByEmployeeId(id);
+
         EmployeeEntity employeeEntity = modelMapper.map(employeeDTO, EmployeeEntity.class);
         employeeEntity.setId(id);
         EmployeeEntity updatedEmployeeEntity = employeeRepository.save(employeeEntity);
@@ -54,20 +58,17 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-        boolean exists = isExistByEmployeeId(employeeId);
-        if (!exists) {
-            return false;
-        }
+
+        isExistByEmployeeId(employeeId);
+
         employeeRepository.deleteById(employeeId);
         return true;
     }
 
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> updates) {
 
-        boolean exists = isExistByEmployeeId(employeeId);
-        if (!exists) {
-            return null;
-        }
+        isExistByEmployeeId(employeeId);
+
         EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).get();
         updates.forEach((key, value) -> {
             log.info("Updating field: {} with value: {}", key, value);
@@ -78,7 +79,10 @@ public class EmployeeService {
         return modelMapper.map(employeeRepository.save(employeeEntity), EmployeeDTO.class);
     }
 
-    public boolean isExistByEmployeeId(Long employeeId) {
-        return employeeRepository.existsById(employeeId);
+    public void isExistByEmployeeId(Long employeeId) {
+        boolean isExist = employeeRepository.existsById(employeeId);
+        if (!isExist) {
+            throw new ResourceNotFoundException("Employee not found with id: " + employeeId);
+        }
     }
 }
