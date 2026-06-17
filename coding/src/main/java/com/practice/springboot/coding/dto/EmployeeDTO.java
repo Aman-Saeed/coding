@@ -1,5 +1,7 @@
 package com.practice.springboot.coding.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.practice.springboot.coding.annotations.employeeRoleValidation;
+import com.practice.springboot.coding.annotations.salaryPrimeValidation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,10 +38,12 @@ public class EmployeeDTO {
    @Digits(integer = 6, fraction = 2, message = "Salary must be a valid monetary amount")
    @DecimalMax(value = "999999.99", message = "Salary must not exceed 999,999.99")
    @DecimalMin(value = "10000.00", message = "Salary must be at least 10000.00")
+   @salaryPrimeValidation
    private Double salary;
 
    @NotBlank(message = "Role cannot be Blank")
-   @Pattern(regexp = "^(ADMIN|USER)$", message = "Role must be either ADMIN or USER")
+   //@Pattern(regexp = "^(ADMIN|USER)$", message = "Role must be either ADMIN or USER")
+   @employeeRoleValidation
    private String role;
 
    @AssertTrue(message = "isActive must be true")
