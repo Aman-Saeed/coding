@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/departments")
 public class DepartmentController {
@@ -24,9 +27,34 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<DepartmentDTO> getAllDepartments() {
-        DepartmentDTO departments = departmentService.getAllDepartments();
-        return new ResponseEntity<>(departments, HttpStatus.OK);
+    public ResponseEntity<List<DepartmentDTO>> getAllDepartments() {
+      return ResponseEntity.ok(departmentService.getAllDepartments());
     }
 
+    @GetMapping("/{departmentId}")
+    public ResponseEntity<List<DepartmentDTO>> getDepartmentById(@PathVariable Long departmentId) {
+        DepartmentDTO department = departmentService.getDepartmentById(departmentId);
+        return new ResponseEntity<>(List.of(department), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{departmentId}")
+    public ResponseEntity<DepartmentDTO> updateDepartment(@RequestBody DepartmentDTO departmentDTO, @PathVariable Long departmentId) {
+        DepartmentDTO updatedDepartment = departmentService.saveDepartment(departmentDTO);
+        return new ResponseEntity<>(updatedDepartment, HttpStatus.OK);
+    }
+    @DeleteMapping(path = "/{departmentId}")
+    public ResponseEntity<Boolean> deleteDepartment(@PathVariable Long departmentId) {
+
+        Boolean gotDeleted = departmentService.deleteDepartment(departmentId);
+        if (gotDeleted){
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    @PatchMapping(path = "/{departmentId}")
+    public ResponseEntity<DepartmentDTO> updatePartialDepartment(@RequestBody Map<String, Object> updates, @PathVariable Long departmentId) {
+        DepartmentDTO departmentDTO = departmentService.updatePartialEmployeeById(updates, departmentId);
+        if(departmentDTO == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(departmentDTO);
+    }
 }
