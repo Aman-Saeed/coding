@@ -3,6 +3,7 @@ package com.practice.springboot.coding.controllers;
 import com.practice.springboot.coding.dto.DepartmentDTO;
 import com.practice.springboot.coding.dto.EmployeeDTO;
 import com.practice.springboot.coding.services.DepartmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentDTO> saveDepartment(@RequestBody DepartmentDTO departmentDTO) {
+    public ResponseEntity<DepartmentDTO> saveDepartment(@RequestBody @Valid DepartmentDTO departmentDTO) {
         DepartmentDTO savedDepartment = departmentService.saveDepartment(departmentDTO);
         return new ResponseEntity<>(savedDepartment, HttpStatus.CREATED);
     }
@@ -38,8 +39,8 @@ public class DepartmentController {
     }
 
     @PutMapping(path = "/{departmentId}")
-    public ResponseEntity<DepartmentDTO> updateDepartment(@RequestBody DepartmentDTO departmentDTO, @PathVariable Long departmentId) {
-        DepartmentDTO updatedDepartment = departmentService.saveDepartment(departmentDTO);
+    public ResponseEntity<DepartmentDTO> updateDepartment(@RequestBody @Valid DepartmentDTO departmentDTO, @PathVariable Long departmentId) {
+        DepartmentDTO updatedDepartment = departmentService.updateDepartmentById(departmentDTO, departmentId);
         return new ResponseEntity<>(updatedDepartment, HttpStatus.OK);
     }
     @DeleteMapping(path = "/{departmentId}")

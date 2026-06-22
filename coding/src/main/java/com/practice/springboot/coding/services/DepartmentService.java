@@ -4,6 +4,7 @@ import com.practice.springboot.coding.dto.DepartmentDTO;
 import com.practice.springboot.coding.dto.EmployeeDTO;
 import com.practice.springboot.coding.entities.DepartmentEntity;
 import com.practice.springboot.coding.entities.EmployeeEntity;
+import com.practice.springboot.coding.exceptions.ResourceNotFoundException;
 import com.practice.springboot.coding.repositories.DepartmentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class DepartmentService {
 
     public void isExistByDepartmentId(Long departmentId) {
         Boolean isExist = departmentRepository.existsById(departmentId);
-        if(!isExist) throw new RuntimeException("Department not found with id: " + departmentId);
+        if(!isExist) throw new ResourceNotFoundException("Department not found with id: " + departmentId);
 
     }
 
@@ -69,5 +70,15 @@ public class DepartmentService {
             ReflectionUtils.setField(fieldToBeUpdated, departmentEntity, value);
         });
         return modelMapper.map(departmentRepository.save(departmentEntity), DepartmentDTO.class);
+    }
+
+    public DepartmentDTO updateDepartmentById(DepartmentDTO departmentDTO, Long departmentId) {
+
+        isExistByDepartmentId(departmentId);
+
+        DepartmentEntity departmentEntity = modelMapper.map(departmentDTO, DepartmentEntity.class);
+        departmentEntity.setId(departmentId);
+        DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
+        return modelMapper.map(updatedDepartmentEntity, DepartmentDTO.class);
     }
 }
